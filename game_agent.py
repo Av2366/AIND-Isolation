@@ -37,6 +37,45 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
+    # For my function I've decided to implement a heuristic that aims to limit the number of moves your opponent can make while maximizing the optionality it creates for our player
+    #For example if you have a situation where you give your opponent one legal move but give yourself four legal moves - this is advantageous. 
+    # There are points where this won't matter at all. However in the endgame this will be particuarly advatangeous, and it's even possible to force end game faster by running this in the mid-game. 
+    # The cases that we have to deal with involve divergent cases - one's in which you can wither give yourself high optionality or limit your opponents moves 
+    # This can come up in a situation where you can either end the game by taking away an opponents last legal move OR giving yourself 4 legal moves. 
+
+    # to deal with this we do a couple things. 
+
+    #1 Anything that leaves our opponent with zero moves is the automatic best move
+
+    #2 In any other case we want to score based on the optionality score that we have - minus our opponents 
+
+    #3 in the case of situations where the score = zero or ties we will take the option that maximizes our optionality. 
+
+    #my_options =0
+    #opp_options =0
+   #optionscore =  =myoptions -opp_options
+
+
+    #Implementation 
+    #Go through the legal moves for the opponent as they are in place
+
+
+
+
+    # Go though the legal moves for ourselves at each new position 
+    #Check how many legal moves they leave us with
+    #Check how many legal moves each of them leaves our opponent with
+    # store them 
+    #evaluate and pick the move based on the rules we stated above. 
+ # in order to check our moves we have to 
+
+
+
+
+
+
+
+
     # TODO: finish this function!
     raise NotImplementedError
 
@@ -139,6 +178,89 @@ class CustomPlayer:
         raise NotImplementedError
 
     def minimax(self, game, depth, maximizing_player=True):
+        
+      #  depth ==1
+
+
+        # The way that I look at this problem is that we have to basic building blocks that we have to do in order to get this to work
+        # Minimax is how we are telling our computer player what the best move is
+        # Alpha beta makes the above more efficient. 
+
+        #I used the pseudocode at https://github.com/aimacode/aima-pseudocode/blob/master/md/Minimax-Decision.md to build this
+       # as given to us in the readme file 
+
+
+
+    #Start by having the time constraint that was implemented for us at the start. 
+
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+
+        def max_value(self,game):
+    
+         # the args self, game represent the current state again following the pseudocode
+            if game.move_count >= depth+2: 
+                return self.score(game,self) # if your in the terminal case return
+
+            v=float("-inf")
+    #setting v = to negative infinity
+            our_moves = game.get_legal_moves()
+    # get all the legal moves
+            for move in our_moves:
+                v=max(v,float(min_value(self,game.forecast_move(move))))    
+            return v
+    # For every move take the max_value of the branches we have. 
+
+
+
+
+        def min_value(self,game):
+    
+    # the args self, game represent the current state again following the pseudocode
+            if game.move_count >= depth+2: 
+                return self.score(game,self) # if your in the terminal case return
+
+            v=float("inf")
+    #setting v = to  infinity
+            our_moves = game.get_legal_moves()
+    # get all the legal moves
+            for move in our_moves:
+                v=min(v,float(max_value(self,game.forecast_move(move))))    
+            return v
+
+        # For every move take the min_value of the branches we have. 
+
+
+    #dealing with the case where we don't have legal moves. 
+        our_moves = game.get_legal_moves(self)
+        if not our_moves:
+            return 0
+
+
+
+#declare these variables I set ab_score equal to negative infinity to make sure that unless it's the worst case scenario we don't return the base case 
+#using a zerou would be bad
+
+        ab_score = float("-inf")
+        ab_move =0
+# now we have to deal with the first part of our pseudo code returning
+
+#The notation argmax a ∈ S f(a) computes the element a of set S that has maximum value of f(a).
+
+        for move in our_moves:
+            score = min_value(self,game.forecast_move(move))
+            if score >ab_score:
+                ab_score =score
+                ab_move=move
+
+        return ab_score,ab_move
+
+
+
+
+
+
+
         """Implement the minimax search algorithm as described in the lectures.
 
         Parameters
@@ -169,13 +291,25 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
-        if self.time_left() < self.TIMER_THRESHOLD:
-            raise Timeout()
+        
 
         # TODO: finish this function!
-        raise NotImplementedError
+       # raise NotImplementedError
+
+
+
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
+       
+
+        #idea is to implement alpha beta pruning - to make our minmax clearer. 
+
+
+
+
+
+
+
         """Implement minimax search with alpha-beta pruning as described in the
         lectures.
 
@@ -216,5 +350,56 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
+
+        def max_value(self,game,alpha,beta):
+            
+            if game.move_count >= depth+2:
+                return self.score(game,self)
+                    
+            v = float("-inf")
+            our_moves = game.get_legal_moves()
+            for move in our_moves:
+                v = max(v,min_value(self,game.forecast_move(move),alpha,beta))
+                if v >= beta:
+                    return v
+                alpha = max(alpha,v)
+            return v
+        
+        def min_value(self,game,alpha,beta):
+        
+            if game.move_count >= depth+2:
+                return self.score(game,self)
+            v = float("inf")
+            our_moves = game.get_legal_moves()
+            for move in our_moves:
+                v = min(v,max_value(self,game.forecast_move(move),alpha,beta))
+                if v <= alpha:
+                    return v
+                beta = min(beta,v)
+            return v
+    
+        our_moves = game.get_legal_moves(self)
+        if not our_moves:
+            return (-1, -1)
+    
+        ab_score = float("-inf")
+        ab_move = (-1,-1)
+    
+        for move in our_moves:
+            score = min_value(self,game.forecast_move(move),alpha,beta)
+        
+            if score >= beta:
+                return score
+            alpha = max(alpha,score)
+        
+            if score > ab_score:
+                ab_score=score
+                ab_move=move
+       
+        return ab_score, ab_move
+
+
+
+
         # TODO: finish this function!
-        raise NotImplementedError
+        #raise NotImplementedError
