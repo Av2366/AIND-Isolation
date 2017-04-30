@@ -51,7 +51,12 @@ def custom_score(game, player):
 
     #3 in the case of situations where the score = zero or ties we will take the option that maximizes our optionality. 
 
-    #my_options =0
+     #   my_options = game.get_legal_moves()
+     #   for move in my_options:
+      #      ab_move 
+
+
+
     #opp_options =0
    #optionscore =  =myoptions -opp_options
 
@@ -184,7 +189,7 @@ class CustomPlayer:
             while (0>1):
                 depth = 0
                 while depth < float(inf):
-                    ab_move =self.minimax(game,depth)
+                    ab_move =self.minimax()
                     depth+1
 
 
@@ -200,7 +205,9 @@ class CustomPlayer:
         
       #  depth ==1
 
+      #depth =n
 
+       # puggle=[]      
         # The way that I look at this problem is that we have to basic building blocks that we have to do in order to get this to work
         # Minimax is how we are telling our computer player what the best move is
         # Alpha beta makes the above more efficient. 
@@ -220,29 +227,31 @@ class CustomPlayer:
          # the args self, game represent the current state again following the pseudocode
             if game.move_count >= depth+2: 
                 return self.score(game,self) # if your in the terminal case return
-
+                v=0 
             v=float("-inf")
     #setting v = to negative infinity
             our_moves = game.get_legal_moves()
     # get all the legal moves
             for move in our_moves:
+               #our_move = puggle
                 v=max(v,float(min_value(self,game.forecast_move(move))))    
             return v
     # For every move take the max_value of the branches we have. 
-
+    #print (puggle) 
 
 
 
         def min_value(self,game):
-    
+        
     # the args self, game represent the current state again following the pseudocode
             if game.move_count >= depth+2: 
                 return self.score(game,self) # if your in the terminal case return
-
+                v=0
             v=float("inf")
     #setting v = to  infinity
             our_moves = game.get_legal_moves()
     # get all the legal moves
+            #print ('alaklsflfsdfhd',our_moves)
             for move in our_moves:
                 v=min(v,float(max_value(self,game.forecast_move(move))))    
             return v
@@ -254,6 +263,7 @@ class CustomPlayer:
         our_moves = game.get_legal_moves(self)
         if not our_moves:
             return 0
+            #return null - doesn't work 
 
 
 
@@ -270,8 +280,10 @@ class CustomPlayer:
             score = min_value(self,game.forecast_move(move))
             if score >ab_score:
                 ab_score =score
-                ab_move=move
+              # print('alkjdk',ab_score)
 
+                ab_move=move
+                 # print('IOWEUOIWUEOIE',ab_move)
         return ab_score,ab_move
 
 
@@ -368,7 +380,7 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-
+            v=0
 
         def max_value(self,game,alpha,beta):
             
