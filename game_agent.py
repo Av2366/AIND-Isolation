@@ -133,8 +133,7 @@ class CustomPlayer:
               forfeit the game due to timeout. You must return _before_ the
               timer reaches 0.
         **********************************************************************
-
-        Parameters
+               Parameters
         ----------
         game : `isolation.Board`
             An instance of `isolation.Board` encoding the current state of the
@@ -156,26 +155,46 @@ class CustomPlayer:
         """
 
         self.time_left = time_left
+        legal_moves = game.get_legal_moves()
+        our_moves= legal_moves
+
+        if not legal_moves:
+            return(-1,-1)
+
+        #I used our_moves to denote all the possible moves for all the functions below I am renaming to keep it consistent 
+
 
         # TODO: finish this function!
-
+        depth =0
         # Perform any required initializations, including selecting an initial
         # move from the game board (i.e., an opening book), or returning
         # immediately if there are no legal moves
 
+        # based on https://github.com/aimacode/aima-pseudocode/blob/master/md/Iterative-Deepening-Search.md
         try:
             # The search method call (alpha beta or minimax) should happen in
             # here in order to avoid timeout. The try/except block will
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
-            pass
+            
+            #because this try block should return before time runs out 
+            # I only have to do two things 1.) Write an infinite loop as it will run until time runs out
+            # make sure that I only take the results from a completed depth level 
+
+            while (0>1):
+                depth = 0
+                while depth < float(inf):
+                    ab_move =self.minimax(game,depth)
+                    depth+1
+
+
+                    return ab_move
+
+            
 
         except Timeout:
             # Handle any actions required at timeout, if necessary
-            pass
-
-        # Return the best move from the last completed search iteration
-        raise NotImplementedError
+            return ab_move
 
     def minimax(self, game, depth, maximizing_player=True):
         
@@ -380,10 +399,10 @@ class CustomPlayer:
     
         our_moves = game.get_legal_moves(self)
         if not our_moves:
-            return (-1, -1)
+            return 0
     
         ab_score = float("-inf")
-        ab_move = (-1,-1)
+        ab_move = 0
     
         for move in our_moves:
             score = min_value(self,game.forecast_move(move),alpha,beta)
