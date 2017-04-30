@@ -332,7 +332,7 @@ class CustomPlayer:
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
        
-
+        n=2
         #idea is to implement alpha beta pruning - to make our minmax clearer. 
 
 
@@ -381,35 +381,39 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
             v=0
-
+            # take a max value but we're using alpha beta to make the decisions 
         def max_value(self,game,alpha,beta):
             
-            if game.move_count >= depth+2:
+            if game.move_count >= depth+n:
                 return self.score(game,self)
                     
             v = float("-inf")
             our_moves = game.get_legal_moves()
             for move in our_moves:
+                print (our_moves)
                 v = max(v,min_value(self,game.forecast_move(move),alpha,beta))
                 if v >= beta:
                     return v
                 alpha = max(alpha,v)
             return v
-        
+                        # take a min value but we're using alpha beta to make the decisions 
+
         def min_value(self,game,alpha,beta):
         
-            if game.move_count >= depth+2:
+            if game.move_count >= depth+n:
                 return self.score(game,self)
             v = float("inf")
             our_moves = game.get_legal_moves()
             for move in our_moves:
+                print (our_moves)
                 v = min(v,max_value(self,game.forecast_move(move),alpha,beta))
                 if v <= alpha:
                     return v
                 beta = min(beta,v)
             return v
-    
+            
         our_moves = game.get_legal_moves(self)
+        #print ( 'akdjlksjs',our_moves)
         if not our_moves:
             return 0
     
@@ -418,15 +422,16 @@ class CustomPlayer:
     
         for move in our_moves:
             score = min_value(self,game.forecast_move(move),alpha,beta)
-        
+            
             if score >= beta:
                 return score
             alpha = max(alpha,score)
-        
+            #print ('frustration')
             if score > ab_score:
                 ab_score=score
+                print(' AB SCORE AB SCORE AB SCORE',ab_move)
                 ab_move=move
-       
+                print(' AB SCORE AB SCORE AB SCORE',ab_move)
         return ab_score, ab_move
 
 
